@@ -1,15 +1,28 @@
-/**
- * Every exported symbol ideally should have a documentation line.
+/** Returns the path to the user's desktop directory.
  *
- * It is important that documentation is easily human readable,
- * but there is also a need to provide additional styling information to ensure
- * generated documentation is more rich text.
- * Therefore JSDoc should generally follow markdown markup to enrich the text.
- *
- * follow https://deno.land/std/style_guide.md
- *
- * @param foo - Description of non obvious parameter
+ * The returned value depends on the operating system and is either a string,
+ * containing a value from the following table, or `null`.
+ * 
+ * |Platform | Value                | Example                    |
+ * | ------- | -------------------- | -------------------------- |
+ * | Linux   | `XDG_DESKTOP_DIR`    | /home/justjavac/Desktop    |
+ * | macOS   | `$HOME`/Desktop      | /Users/justjavac/Desktop   |
+ * | Windows | `{FOLDERID_Desktop}` | C:\Users\justjavac\Desktop |
  */
-export default function starter(foo: string): string {
-  return foo;
+export default function desktopDir(): string | null {
+  switch (Deno.build.os) {
+    case "linux": 
+      return Deno.env.get("XDG_DESKTOP_DIR") ?? null;
+
+    case "darwin": {
+      const home = Deno.env.get("HOME");
+      if (home) return `${home}/Desktop`;
+      break;
+    }
+
+    case "windows":
+      return Deno.env.get("FOLDERID_Desktop") ?? null;
+  }
+
+  return null;
 }
