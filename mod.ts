@@ -11,7 +11,7 @@
  */
 export default function desktopDir(): string | null {
   switch (Deno.build.os) {
-    case "linux": 
+    case "linux":
       return Deno.env.get("XDG_DESKTOP_DIR") ?? null;
 
     case "darwin": {
